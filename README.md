@@ -42,3 +42,7 @@ The only validation that we have currently is a number possibility checker using
 * Output is limited to Excel (XSLX) format, I'm gonna add more formats ASAP.
 
 * Code structure is not quite good, but its and MVP, Proof of concept, and early-stage script.
+
+
+
+![OSINT](https://i.imgur.com/wpOXQpV.gif)
