@@ -1,88 +1,52 @@
 
-import phonenumbers
-from openpyxl import Workbook
-
-# All ISPs codes
-mtn = ["+98933", "+98935", "+98936", "+98937", "+98938",
-       "+98939", "+98930", "+98901", "+98902", "+98903", "+98905"]
-mci = ["+98910", "+98913", "+98990", "+98919", "+98992", "+98910", "+98912",
-       "+98914", "+98915", "+98916", "+98917", "+98918", "+98991", "+98993"]
-rtl = ["+98920", "+98921", "+98922", "+98923"]
+# # All ISPs codes
+# mtn = ["+98933", "+98935", "+98936", "+98937", "+98938",
+#        "+98939", "+98930", "+98901", "+98902", "+98903", "+98905"]
+# mci = ["+98910", "+98913", "+98990", "+98919", "+98992", "+98910", "+98912",
+#        "+98914", "+98915", "+98916", "+98917", "+98918", "+98991", "+98993"]
+# rtl = ["+98920", "+98921", "+98922", "+98923"]
 
 
-# Create largest number with given Digit amount
-def Last_number_with_N_digits(n):
-    range_end = (10**n)-1
-    return range_end
+import itertools
+import vobject
 
 
-# Create left over numbers
-def create_bulk(number):
-    num = 7 - number
-    output = []
-    for i in range(0, Last_number_with_N_digits(num)+1):
-        output.append(str(i).rjust(num, '0'))
+def generate_numbers(number):
+    """Generate a list of 11 digit numbers with missing digits replaced by every possible digit from 0 to 9"""
 
-    return output
+    # Find the positions of the stars in the input number
+    star_positions = [i for i in range(len(number)) if number[i] == "*"]
 
+    # Generate a list of every possible digit permutation for the missing positions
+    digit_permutations = [[str(digit) for digit in range(10)]
+                          for _ in range(len(star_positions))]
+    digit_combinations = itertools.product(*digit_permutations)
+    digit_combinations = [''.join(x) for x in digit_combinations]
 
-# combine left over numbers with given data
+    # Replace the stars in the input number with each possible digit combination to generate a list of 11 digit numbers
+    numbers = []
+    for digits in digit_combinations:
+        new_number = number
+        for i in range(len(star_positions)):
+            new_number = new_number[:star_positions[i]] + \
+                digits[i] + new_number[star_positions[i]+1:]
+        numbers.append(new_number)
 
-
-def number_generator(isp, number, amount):
-    output = []
-    if isp.lower() == "mtn":
-        for i in mtn:
-            for n in create_bulk(amount):
-                num = f"{i}{n}{number}"
-                z = phonenumbers.parse(num, None)
-                if phonenumbers.is_valid_number(z):
-                    output.append(num)
-    elif isp.lower() == "mci":
-        for i in mci:
-            for n in create_bulk(amount):
-                num = f"{i}{n}{number}"
-                z = phonenumbers.parse(num, None)
-                if phonenumbers.is_valid_number(z):
-                    output.append(num)
-    elif isp.lower() == "rtl":
-        for i in rtl:
-            for n in create_bulk(amount):
-                num = f"{i}{n}{number}"
-                z = phonenumbers.parse(num, None)
-                if phonenumbers.is_valid_number(z):
-                    output.append(num)
-    return output
+    return numbers
 
 
-def convert_to_excel(numbers: list):
-    wb = Workbook()
-    ws = wb.active
-    for idx, i in enumerate(numbers):
-        ws[f'A{idx+1}'] = i
-    wb.save("Phone_numbers_output.xlsx")
+number = "92116*4*86"
+contacts = generate_numbers(number)
 
+# Create a VCF file with the generated contacts
+vcard_list = []
+for contact in contacts:
+    vcard = vobject.vCard()
+    vcard.add('fn').value = "Contact " + contact
+    vcard.add('tel').value = "+98" + contact
+    vcard_list.append(vcard)
 
-isp = ''
-while (True):
-    try:
-        isp = input(
-            "please enter ISPs (MTN, MCI, RTL) or enter (exit) to close: ")
-        print(isp)
-    except:
-        print("please enter the correct value")
-        continue
-
-    phone_number = input("please enter the number that you have: ")
-    amount = len(phone_number)
-
-    if isp.lower() == 'exit':
-        break
-    break
-
-
-out = number_generator(isp, phone_number, amount)
-convert_to_excel(out)
-print(len(out))
-
-# create_bulk(int(input("please enter amount of numbers that you have: ")))
+with open("contacts.vcf", "w") as vcf_file:
+    for vcard in vcard_list:
+        vcf_file.write(vcard.serialize())
+        vcf_file.write('\n')
