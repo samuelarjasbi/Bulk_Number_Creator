@@ -1,4 +1,7 @@
 
+# import phonenumbers
+# from openpyxl import Workbook
+
 # # All ISPs codes
 # mtn = ["+98933", "+98935", "+98936", "+98937", "+98938",
 #        "+98939", "+98930", "+98901", "+98902", "+98903", "+98905"]
@@ -35,7 +38,7 @@ def generate_numbers(number):
     return numbers
 
 
-number = "92116*4*86"
+number = "9123*45**3"  # Change this Value to your missing number
 contacts = generate_numbers(number)
 
 # Create a VCF file with the generated contacts

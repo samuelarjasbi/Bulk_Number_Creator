@@ -17,17 +17,9 @@ pip install -r requirements.txt
 
 ## Usage
 
-Enter ISP name:
-```
-please enter ISPs (MTN, MCI, RTL) or enter (exit) to close: 
-```
+change the number Variable at line 41 to number that you want 
 
-Enter the last digits (No matter how many digits you have):
-```
-please enter the number that you have:
-```
-
-The output you will give would be a .XSLX file in the source code folder.
+it will give you a VCF file named "contacts.vcf" as output
 
 ## Validation
 
@@ -37,9 +29,9 @@ The only validation that we have currently is a number possibility checker using
 
 * The number of generated phone numbers is so high, it is near to impossible to save __And__ check all of them in social medias and messengers. 
 
-* The Validation method is not useful, I've found a way to validate them all using official ISP websites but the current approach that I'm trying has low speed and not much reliability. 
+* There is no Validation, I've found a way to validate them all using official ISP websites but the current approach that I'm trying has low speed and not much reliability. 
 
-* Output is limited to Excel (XSLX) format, I'm gonna add more formats ASAP.
+* Output is limited to Excel (VCF) format, I'm gonna add more formats ASAP.
 
 * Code structure is not quite good, but its and MVP, Proof of concept, and early-stage script.
 
